@@ -1,6 +1,5 @@
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const isDev = process.env.NODE_ENV === 'development';
-const config = require('./src/config')[isDev ? 'dev' : 'build'];
 
 module.exports = {
     mode: 'development',
@@ -29,7 +28,6 @@ module.exports = {
                 removeAttributeQuotes: false,
                 collapseWhitespace: false,
             },
-            config: config.template
         })
     ]
 }

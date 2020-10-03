@@ -1,6 +1,6 @@
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const isDev = process.env.NODE_ENV === 'development';
-const config = require('./src/config')[isDev ? 'dev' : 'build'];
+const config = require('./src/js/config')[isDev ? 'dev' : 'build'];
 
 module.exports = {
     devtool: 'cheap-module-eval-source-map',
@@ -9,9 +9,7 @@ module.exports = {
             {
                 test: /\.(jsx|js)?$/,
                 exclude: /node_modules/,
-                use: [
-                    'babel-loader'
-                ]
+                use: ['babel-loader']
             },
             // {
             //     test: /\.(css|scss)$/,
@@ -49,13 +47,17 @@ module.exports = {
                         loader: 'url-loader',
                         options: {
                             limit: 10240, //10K
-                            esModule: false,
-                            name: '[name]_[hash:6].[ext]'
+                            // esModule: false,
+                            // name: '[name]_[hash:6].[ext]'
                         }
                     }
                 ],
                 exclude: /node_modules/
             },
+            // {
+            //     test: /\.(htm|html)$/i,
+            //     use:[ 'html-withimg-loader']
+            // }
             // {
             //     test: /\.(png|jpg|gif|jpeg|webp|svg|eot|ttf|woff|woff2)$/,
             //     use: [

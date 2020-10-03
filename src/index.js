@@ -1,4 +1,4 @@
-import './style.scss';
+import '../src/style/style.scss';
 
 class Animal {
     constructor(name) {

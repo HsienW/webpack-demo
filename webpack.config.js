@@ -56,10 +56,12 @@ module.exports = {
                 ],
                 exclude: /node_modules/
             },
-            {
-                test: /\.(png|jpg|gif|jpeg|webp|svg|eot|ttf|woff|woff2)$/,
-                loader: 'file-loader'
-            },
+            // {
+            //     test: /\.(png|jpg|gif|jpeg|webp|svg|eot|ttf|woff|woff2)$/,
+            //     use: [
+            //         'file-loader',
+            //     ]
+            // },
         ]
     },
     devServer: {
@@ -70,11 +72,11 @@ module.exports = {
         new HtmlWebpackPlugin({
             template: './src/index.html',
             filename: 'index.html',
-            config: config.template,
-            minify: {
-                removeAttributeQuotes: false,
-                collapseWhitespace: false,
-            },
+            // config: config.template,
+            // minify: {
+            //     removeAttributeQuotes: false,
+            //     collapseWhitespace: false,
+            // },
         })
     ]
 }

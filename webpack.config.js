@@ -1,9 +1,19 @@
 const HtmlWebpackPlugin = require('html-webpack-plugin');
+const {CleanWebpackPlugin} = require('clean-webpack-plugin');
 const isDev = process.env.NODE_ENV === 'development';
 const config = require('./src/js/config')[isDev ? 'dev' : 'build'];
 
 module.exports = {
     devtool: 'cheap-module-eval-source-map',
+    entry: [
+        './src/js/polyfills.js',
+        './src/index.js'
+    ],
+    output: {
+        // path: path.resolve(__dirname, 'dist'), // 必須是絕對路徑
+        filename: 'bundle.[hash:6].js',
+        publicPath: '/' // 通常是 CDN 位置
+    },
     module: {
         rules: [
             {
@@ -79,6 +89,7 @@ module.exports = {
             //     removeAttributeQuotes: false,
             //     collapseWhitespace: false,
             // },
-        })
+        }),
+        new CleanWebpackPlugin()
     ]
 }

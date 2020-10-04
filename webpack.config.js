@@ -1,9 +1,12 @@
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const {CleanWebpackPlugin} = require('clean-webpack-plugin');
 const CopyWebpackPlugin = require('copy-webpack-plugin');
-const isDev = process.env.NODE_ENV === 'development';
+const MiniCssExtractPlugin = require('mini-css-extract-plugin');
+const OptimizeCssPlugin = require('optimize-css-assets-webpack-plugin');
 const path = require('path');
 const webpack = require('webpack');
+
+const isDev = process.env.NODE_ENV === 'development';
 const config = require('./src/js/config')[isDev ? 'dev' : 'build'];
 
 module.exports = {
@@ -36,21 +39,29 @@ module.exports = {
             // },
             {
                 test: /\.(sc|c)ss$/,
-                use: ['style-loader', 'css-loader', {
-                    loader: 'postcss-loader',
-                    options: {
-                        plugins: function () {
-                            return [
-                                require('autoprefixer')({
-                                    "overrideBrowserslist": [
-                                        ">0.25%",
-                                        "not dead"
-                                    ]
-                                })
-                            ]
+                use: [
+                    {
+                        loader: MiniCssExtractPlugin.loader,
+                        options: {
+                            hmr: isDev,
+                            reloadAll: true,
                         }
-                    }
-                }, 'sass-loader'],
+                    },
+                    'css-loader', {
+                        loader: 'postcss-loader',
+                        options: {
+                            plugins: function () {
+                                return [
+                                    require('autoprefixer')({
+                                        "overrideBrowserslist": [
+                                            ">0.25%",
+                                            "not dead"
+                                        ]
+                                    })
+                                ]
+                            }
+                        }
+                    }, 'sass-loader'],
                 exclude: /node_modules/
             },
             {
@@ -107,6 +118,10 @@ module.exports = {
         new webpack.ProvidePlugin({
             _: ['lodash']
         }),
+        new MiniCssExtractPlugin({
+            filename: "[name].css",
+        }),
+        new OptimizeCssPlugin(), // 應該配置在 webpack.config.prod.js
         new CleanWebpackPlugin()
     ]
 }

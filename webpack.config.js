@@ -1,6 +1,8 @@
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const {CleanWebpackPlugin} = require('clean-webpack-plugin');
+const CopyWebpackPlugin = require('copy-webpack-plugin');
 const isDev = process.env.NODE_ENV === 'development';
+const path = require('path');
 const config = require('./src/js/config')[isDev ? 'dev' : 'build'];
 
 module.exports = {
@@ -90,6 +92,17 @@ module.exports = {
             //     collapseWhitespace: false,
             // },
         }),
+        new CopyWebpackPlugin(
+            {
+                patterns: [
+                    {
+                        from: 'test-copy/*.js',
+                        to: path.resolve(__dirname, 'dist', 'test-copy'),
+                        flatten: true,
+                    }
+                ],
+            }
+        ),
         new CleanWebpackPlugin()
     ]
 }

@@ -3,6 +3,7 @@ const {CleanWebpackPlugin} = require('clean-webpack-plugin');
 const CopyWebpackPlugin = require('copy-webpack-plugin');
 const isDev = process.env.NODE_ENV === 'development';
 const path = require('path');
+const webpack = require('webpack');
 const config = require('./src/js/config')[isDev ? 'dev' : 'build'];
 
 module.exports = {
@@ -100,9 +101,12 @@ module.exports = {
                         to: path.resolve(__dirname, 'dist', 'test-copy'),
                         flatten: true,
                     }
-                ],
+                ]
             }
         ),
+        new webpack.ProvidePlugin({
+            _: ['lodash']
+        }),
         new CleanWebpackPlugin()
     ]
 }

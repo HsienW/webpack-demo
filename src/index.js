@@ -1,5 +1,7 @@
 import '../src/style/style.scss';
 
+const array = ['a', 'aa', 'b', 'bb'];
+
 class Animal {
     constructor(name) {
         this.name = name;
@@ -7,6 +9,10 @@ class Animal {
 
     getName() {
         return this.name;
+    }
+
+    arrayFilter() {
+        _.filter(array, 'a');
     }
 }
 

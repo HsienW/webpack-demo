@@ -12,3 +12,12 @@ body {
   background-image: url(../assets/test.svg);
 }
 
+.test {
+  width: 100px;
+  height: 100px;
+  background: red;
+  display: flex;
+  justify-content: center;
+  align-content: center;
+}
+

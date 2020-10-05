@@ -1,4 +1,5 @@
 import '../src/style/style.scss';
+import {componentTest} from 'component'; // 可以省略長的 import path
 
 const array = ['a', 'aa', 'b', 'bb'];
 
@@ -13,6 +14,10 @@ class Animal {
 
     arrayFilter() {
         _.filter(array, 'a');
+    }
+
+    test() {
+        componentTest();
     }
 }
 

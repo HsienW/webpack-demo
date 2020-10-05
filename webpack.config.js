@@ -20,6 +20,9 @@ module.exports = {
         filename: 'bundle.[hash:6].js',
         publicPath: '/' // 通常是 CDN 位置
     },
+    resolve: {
+        modules: ['./long-path-test/long-path-test-test', 'node_modules'] // 從左到右依次查詢
+    },
     module: {
         rules: [
             {

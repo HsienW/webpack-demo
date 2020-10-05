@@ -21,7 +21,12 @@ module.exports = {
         publicPath: '/' // 通常是 CDN 位置
     },
     resolve: {
-        modules: ['./long-path-test/long-path-test-test', 'node_modules'] // 從左到右依次查詢
+        // alias 是配置用新的別名把原本的 import path 映射成一個新的 import path
+        alias: {
+            'react': '@test/react-native-to-web' // 這名子是亂取的
+        },
+        // modules 可以省略長的 import path, 從左到右依次查詢 , 若第一個找不到就會去 node_modules 找
+        modules: ['./long-path-test/long-path-test-test', 'node_modules']
     },
     module: {
         rules: [
@@ -73,7 +78,7 @@ module.exports = {
                     {
                         loader: 'url-loader',
                         options: {
-                            limit: 10240, //10K
+                            limit: 10240, // size 大於 10K 就轉成使用 asset, 小於的話就轉成 64 base
                             // esModule: false,
                             // name: '[name]_[hash:6].[ext]'
                         }
@@ -126,7 +131,7 @@ module.exports = {
             filename: "[name].css",
         }),
         new webpack.HotModuleReplacementPlugin(),
-        new OptimizeCssPlugin(), // 應該配置在 webpack.config.prod.js
+        new OptimizeCssPlugin(), // 壓縮 css 應該配置在 webpack.config.prod.js, dev 不用
         new CleanWebpackPlugin()
     ]
 }

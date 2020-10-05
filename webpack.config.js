@@ -21,12 +21,17 @@ module.exports = {
         publicPath: '/' // 通常是 CDN 位置
     },
     resolve: {
-        // alias 是配置用新的別名把原本的 import path 映射成一個新的 import path
+        // extensions 可以用來設定 mobile 端要轉 web 的 file, 先找 .web.js, 如果沒有再找.js
+        extensions: ['web.js', '.js'],
+        // alias 是設定用新的別名把原本的 import path 映射成一個新的 import path
         alias: {
             'react': '@test/react-native-to-web' // 這名子是亂取的
         },
         // modules 可以省略長的 import path, 從左到右依次查詢 , 若第一個找不到就會去 node_modules 找
-        modules: ['./long-path-test/long-path-test-test', 'node_modules']
+        modules: ['./long-path-test/long-path-test-test', 'node_modules'],
+        // mainFields 可以修改 default 設定, default 是 ['browser', 'main'],
+        // 先找對應 package.json中的 browser 字段, 如果沒有找 main
+        mainFields: ['style', 'main']
     },
     module: {
         rules: [
@@ -131,7 +136,7 @@ module.exports = {
             filename: "[name].css",
         }),
         new webpack.HotModuleReplacementPlugin(),
-        new OptimizeCssPlugin(), // 壓縮 css 應該配置在 webpack.config.prod.js, dev 不用
+        new OptimizeCssPlugin(), // 壓縮 css 應該設定在 webpack.config.prod.js, dev 不用
         new CleanWebpackPlugin()
     ]
 }

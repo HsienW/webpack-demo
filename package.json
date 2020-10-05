@@ -7,7 +7,8 @@
     "dev": "cross-env --mode=development webpack-dev-server",
     "build": "cross-env --mode=production webpack",
     "build-multiple": "cross-env webpack --config webpack-multiple-page.config.js",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test-dev": "cross-env --mode=development webpack-dev-server --config webpack.config.dev.js",
+    "test-prod": "cross-env --mode=production webpack --config webpack.config.prod.js"
   },
   "author": "",
   "license": "ISC",
@@ -35,7 +36,8 @@
     "url-loader": "4.1.0",
     "webpack": "4.43.0",
     "webpack-cli": "3.3.11",
-    "webpack-dev-server": "3.10.3"
+    "webpack-dev-server": "3.10.3",
+    "webpack-merge": "5.1.4"
   },
   "dependencies": {
     "@babel/runtime": "7.9.6",

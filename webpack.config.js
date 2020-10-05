@@ -92,7 +92,8 @@ module.exports = {
     },
     devServer: {
         port: '8080',
-        compress: true
+        compress: true,
+        hot: true
     },
     plugins: [
         new HtmlWebpackPlugin({
@@ -121,6 +122,7 @@ module.exports = {
         new MiniCssExtractPlugin({
             filename: "[name].css",
         }),
+        new webpack.HotModuleReplacementPlugin(),
         new OptimizeCssPlugin(), // 應該配置在 webpack.config.prod.js
         new CleanWebpackPlugin()
     ]

@@ -23,3 +23,19 @@ class Animal {
 
 const dog = new Animal('dog');
 console.log('test');
+
+// this use mocker-api lib fake call api
+fetch("/login/account", {
+    method: "POST",
+    headers: {
+        'Accept': 'application/json',
+        'Content-Type': 'application/json'
+    },
+    body: JSON.stringify({
+        username: "this-demo",
+        password: "this-demo"
+    })
+})
+    .then(response => response.json())
+    .then(data => console.log(data))
+    .catch(error => console.log(error));

@@ -5,6 +5,7 @@ const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 const OptimizeCssPlugin = require('optimize-css-assets-webpack-plugin');
 const path = require('path');
 const webpack = require('webpack');
+const apiMocker = require('mocker-api');
 
 const isDev = process.env.NODE_ENV === 'development';
 const config = require('./src/js/config')[isDev ? 'dev' : 'build'];
@@ -106,7 +107,11 @@ module.exports = {
     devServer: {
         port: '8080',
         compress: true,
-        hot: true
+        hot: true,
+        // this use mocker-api lib fake call api
+        before(app) {
+            apiMocker(app, path.resolve('./src/mock-data/mocker-api.js'))
+        }
     },
     plugins: [
         new HtmlWebpackPlugin({

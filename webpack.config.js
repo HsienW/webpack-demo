@@ -7,7 +7,11 @@ const path = require('path');
 const webpack = require('webpack');
 const apiMocker = require('mocker-api');
 
-// SpeedMeasurePlugin 可以測量各個 Plugin 和 loader 所花費的時間
+// HardSourceWebpackPlugin 為 module 提供中間佔存, 存放路徑是: node_modules/.cache/hard-source
+// 消果再非初次 build 時可以看出, 大幅壓縮
+const HardSourceWebpackPlugin = require('hard-source-webpack-plugin');
+
+// SpeedMeasurePlugin 可以測量各個 plugin 和 loader 所花費的時間
 const SpeedMeasurePlugin = require("speed-measure-webpack-plugin");
 
 // HappyPack 可以把 task 分解給多個子線程去並發的執行, 子線程處理完後再把結果發送給主線程
@@ -15,6 +19,13 @@ const SpeedMeasurePlugin = require("speed-measure-webpack-plugin");
 // 若 project 不是很複雜時, 不需要配置 HappyPack,
 // 因為進程的分配和管理也需要時間, 並不能有效提升構建速度, 甚至會變慢。
 const HappyPack = require('happypack');
+
+// thread-loader
+// 放置在其它 loader 之前, 那麼放置在這個 loader 之後的 loader 就會在一個單獨的 worker loop 中運行
+// 放入 thread-loader 的 loader 受到以下的限制:
+// 1. 不能產生新的文件
+// 2. 不能使用定制的 loaderAPI
+// 3. 無法獲取 webpack 的選項設置
 
 const isDev = process.env.NODE_ENV === 'development';
 const config = require('./src/js/config')[isDev ? 'dev' : 'build'];
@@ -46,6 +57,8 @@ module.exports = smp.wrap({
         mainFields: ['style', 'main']
     },
     module: {
+        // noParse 用來標識這個 module, 不進行轉化和解析, 讓 Webpack 直接引入使用
+        noParse: /jquery|lodash/,
         // loader 的使用 exclude 優先級高於 include, 在include 和 exclude 中使用絕對路徑 array,
         // 盡量避免 exclude, 因為會涵蓋到多餘的, 所以更傾向於使用include
         rules: [
@@ -161,14 +174,22 @@ module.exports = smp.wrap({
                 ]
             }
         ),
-        new webpack.ProvidePlugin({
-            _: ['lodash']
-        }),
         new MiniCssExtractPlugin({
             filename: "[name].css",
         }),
+        new webpack.ProvidePlugin({
+            _: ['lodash']
+        }),
+        // manifest.json 用於讓 DLLReferencePlugin 映射到相關 dependency
+        new webpack.DllReferencePlugin({
+            manifest: path.resolve(__dirname, 'dist', 'dll', 'manifest.json')
+        }),
         new webpack.HotModuleReplacementPlugin(),
         new OptimizeCssPlugin(), // 壓縮 css 應該設定在 webpack.config.prod.js, dev 不用
-        new CleanWebpackPlugin()
+        new HardSourceWebpackPlugin(),
+        new CleanWebpackPlugin({
+            // 設定每次 build 都不清除 dll folder, 因為是抽出不常更新的第三方套件
+            cleanOnceBeforeBuildPatterns: ['**/*', '!dll', '!dll/**']
+        })
     ]
 })

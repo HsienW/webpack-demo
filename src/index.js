@@ -22,7 +22,7 @@ class Animal {
 }
 
 const dog = new Animal('dog');
-console.log('test-test-test test-test-test test-test-test ');
+console.log('test-test-test test-test-test test-test-test test-test-test');
 
 // this use mocker-api lib fake call api
 fetch("/login/account", {

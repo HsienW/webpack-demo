@@ -10,6 +10,12 @@ const apiMocker = require('mocker-api');
 // SpeedMeasurePlugin 可以測量各個 Plugin 和 loader 所花費的時間
 const SpeedMeasurePlugin = require("speed-measure-webpack-plugin");
 
+// HappyPack 可以把 task 分解給多個子線程去並發的執行, 子線程處理完後再把結果發送給主線程
+// 若 build 的時候速度緩慢很有用
+// 若 project 不是很複雜時, 不需要配置 HappyPack,
+// 因為進程的分配和管理也需要時間, 並不能有效提升構建速度, 甚至會變慢。
+const HappyPack = require('happypack');
+
 const isDev = process.env.NODE_ENV === 'development';
 const config = require('./src/js/config')[isDev ? 'dev' : 'build'];
 
@@ -47,7 +53,10 @@ module.exports = smp.wrap({
                 test: /\.(jsx|js)?$/,
                 include: [path.resolve(__dirname, 'src')],
                 // exclude: /node_modules/,
-                use: ['babel-loader']
+
+                // 跟 plugins 中的設定對應
+                use: 'happypack/loader?id=js',
+                // use: ['cache-loader', 'babel-loader']
             },
             // {
             //     test: /\.(css|scss)$/,
@@ -62,6 +71,7 @@ module.exports = smp.wrap({
             {
                 test: /\.(sc|c)ss$/,
                 use: [
+                    'cache-loader',
                     {
                         loader: MiniCssExtractPlugin.loader,
                         options: {
@@ -124,6 +134,13 @@ module.exports = smp.wrap({
         }
     },
     plugins: [
+        new HappyPack({
+            // 跟設定中的 module.rules 的 id 對應(id=js)
+            id: 'js',
+            // 跟之前設定的 module.rules loader 一樣
+            /** 若跟 cache-loader 同時使用請先刪除 node_modules\.cache\cache-loader 舊有的 cache **/
+            use: ['cache-loader', 'babel-loader'] // 必須是 array
+        }),
         new HtmlWebpackPlugin({
             template: './src/index.html',
             filename: 'index.html',

@@ -7,10 +7,15 @@ const path = require('path');
 const webpack = require('webpack');
 const apiMocker = require('mocker-api');
 
+// SpeedMeasurePlugin 可以測量各個 Plugin 和 loader 所花費的時間
+const SpeedMeasurePlugin = require("speed-measure-webpack-plugin");
+
 const isDev = process.env.NODE_ENV === 'development';
 const config = require('./src/js/config')[isDev ? 'dev' : 'build'];
 
-module.exports = {
+const smp = new SpeedMeasurePlugin();
+
+module.exports = smp.wrap({
     devtool: 'cheap-module-eval-source-map',
     entry: [
         './src/js/polyfills.js',
@@ -35,10 +40,13 @@ module.exports = {
         mainFields: ['style', 'main']
     },
     module: {
+        // loader 的使用 exclude 優先級高於 include, 在include 和 exclude 中使用絕對路徑 array,
+        // 盡量避免 exclude, 因為會涵蓋到多餘的, 所以更傾向於使用include
         rules: [
             {
                 test: /\.(jsx|js)?$/,
-                exclude: /node_modules/,
+                include: [path.resolve(__dirname, 'src')],
+                // exclude: /node_modules/,
                 use: ['babel-loader']
             },
             // {
@@ -76,7 +84,8 @@ module.exports = {
                             }
                         }
                     }, 'sass-loader'],
-                exclude: /node_modules/
+                include: [path.resolve(__dirname, 'src')],
+                // exclude: /node_modules/
             },
             {
                 test: /\.(png|jpg|gif|jpeg|webp|svg|eot|ttf|woff|woff2)$/,
@@ -90,7 +99,8 @@ module.exports = {
                         }
                     }
                 ],
-                exclude: /node_modules/
+                include: [path.resolve(__dirname, 'src')],
+                // exclude: /node_modules/
             },
             // {
             //     test: /\.(htm|html)$/i,
@@ -144,4 +154,4 @@ module.exports = {
         new OptimizeCssPlugin(), // 壓縮 css 應該設定在 webpack.config.prod.js, dev 不用
         new CleanWebpackPlugin()
     ]
-}
+})

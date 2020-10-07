@@ -18,7 +18,7 @@ const SpeedMeasurePlugin = require("speed-measure-webpack-plugin");
 // 若 build 的時候速度緩慢很有用
 // 若 project 不是很複雜時, 不需要配置 HappyPack,
 // 因為進程的分配和管理也需要時間, 並不能有效提升構建速度, 甚至會變慢。
-const HappyPack = require('happypack');
+// const HappyPack = require('happypack');
 
 // thread-loader
 // 放置在其它 loader 之前, 那麼放置在這個 loader 之後的 loader 就會在一個單獨的 worker loop 中運行
@@ -35,7 +35,7 @@ const smp = new SpeedMeasurePlugin();
 module.exports = smp.wrap({
     devtool: 'cheap-module-eval-source-map',
     entry: [
-        './src/js/polyfills.js',
+        // './src/js/polyfills.js',
         './src/index.js'
     ],
     output: {
@@ -45,10 +45,13 @@ module.exports = smp.wrap({
     },
     resolve: {
         // extensions 可以用來設定 mobile 端要轉 web 的 file, 先找 .web.js, 如果沒有再找.js
-        extensions: ['web.js', '.js'],
+        extensions: [
+            'web.js',
+            '.js'
+        ],
         // alias 是設定用新的別名把原本的 import path 映射成一個新的 import path
         alias: {
-            'react': '@test/react-native-to-web' // 這名子是亂取的
+            // 'react': '@test/react-native-to-web' // 這名子是亂取的
         },
         // modules 可以省略長的 import path, 從左到右依次查詢 , 若第一個找不到就會去 node_modules 找
         modules: ['./long-path-test/long-path-test-test', 'node_modules'],
@@ -68,8 +71,8 @@ module.exports = smp.wrap({
                 // exclude: /node_modules/,
 
                 // 跟 plugins 中的設定對應
-                use: 'happypack/loader?id=js',
-                // use: ['cache-loader', 'babel-loader']
+                // use: 'happypack/loader?id=js',
+                use: ['cache-loader', 'babel-loader']
             },
             // {
             //     test: /\.(css|scss)$/,
@@ -147,13 +150,13 @@ module.exports = smp.wrap({
         }
     },
     plugins: [
-        new HappyPack({
-            // 跟設定中的 module.rules 的 id 對應(id=js)
-            id: 'js',
-            // 跟之前設定的 module.rules loader 一樣
-            /** 若跟 cache-loader 同時使用請先刪除 node_modules\.cache\cache-loader 舊有的 cache **/
-            use: ['cache-loader', 'babel-loader'] // 必須是 array
-        }),
+        // new HappyPack({
+        //     // 跟設定中的 module.rules 的 id 對應(id=js)
+        //     id: 'js',
+        //     // 跟之前設定的 module.rules loader 一樣
+        //     /** 若跟 cache-loader 同時使用請先刪除 node_modules\.cache\cache-loader 舊有的 cache **/
+        //     use: ['cache-loader', 'babel-loader'] // 必須是 array
+        // }),
         new HtmlWebpackPlugin({
             template: './src/index.html',
             filename: 'index.html',

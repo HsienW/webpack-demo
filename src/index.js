@@ -1,27 +1,40 @@
+import React from 'react';
+import ReactDOM from 'react-dom';
 import '../src/style/style.scss';
 import {componentTest} from 'component'; // 可以省略長的 import path
 
 const array = ['a', 'aa', 'b', 'bb'];
 
-class Animal {
-    constructor(name) {
-        this.name = name;
-    }
+const TestReact = () => {
+    return (
+        <div>我是 react test </div>
+    );
+};
 
-    getName() {
-        return this.name;
-    }
 
-    arrayFilter() {
-        _.filter(array, 'a');
-    }
+ReactDOM.render(
+    <TestReact/>
+    , document.getElementById('root'));
 
-    test() {
-        componentTest();
-    }
-}
+// class Animal {
+//     constructor(name) {
+//         this.name = name;
+//     }
+//
+//     getName() {
+//         return this.name;
+//     }
+//
+//     arrayFilter() {
+//         _.filter(array, 'a');
+//     }
+//
+//     test() {
+//         componentTest();
+//     }
+// }
 
-const dog = new Animal('dog');
+// const dog = new Animal('dog');
 console.log('test-test-test test-test-test test-test-test test-test-test');
 
 // this use mocker-api lib fake call api

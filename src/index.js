@@ -1,7 +1,7 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 import '../src/style/style.scss';
-import {componentTest} from 'component'; // 可以省略長的 import path
+// import {componentTest} from 'component'; // 可以省略長的 import path
 
 const array = ['a', 'aa', 'b', 'bb'];
 
@@ -35,7 +35,7 @@ ReactDOM.render(
 // }
 
 // const dog = new Animal('dog');
-console.log('test-test-test test-test-test test-test-test test-test-test');
+console.log('test-test-test test-test-test test-test-test test-test-test test-test-test');
 
 // this use mocker-api lib fake call api
 fetch("/login/account", {

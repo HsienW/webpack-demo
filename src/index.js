@@ -1,6 +1,10 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
+import moment from 'moment';
+// import {v4 as uuidv4} from 'uuid';
 import '../src/style/style.scss';
+import {commonTest} from './common/common-test';
+import {commonTestTwo} from './common/common-test-2';
 // import {componentTest} from 'component'; // 可以省略長的 import path
 
 const array = ['a', 'aa', 'b', 'bb'];
@@ -35,7 +39,7 @@ ReactDOM.render(
 // }
 
 // const dog = new Animal('dog');
-console.log('test-test-test test-test-test test-test-test test-test-test test-test-test');
+console.log('test');
 
 // this use mocker-api lib fake call api
 fetch("/login/account", {

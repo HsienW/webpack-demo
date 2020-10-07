@@ -6,6 +6,7 @@ const OptimizeCssPlugin = require('optimize-css-assets-webpack-plugin');
 const path = require('path');
 const webpack = require('webpack');
 const apiMocker = require('mocker-api');
+const MomentLocalesPlugin = require('moment-locales-webpack-plugin');
 
 // HardSourceWebpackPlugin 為 module 提供中間佔存, 存放路徑是: node_modules/.cache/hard-source
 // 消果再非初次 build 時可以看出, 大幅壓縮
@@ -47,6 +48,33 @@ module.exports = smp.wrap({
         // path: path.resolve(__dirname, 'dist'), // 必須是絕對路徑
         filename: 'bundle.[hash:6].js',
         publicPath: '/' // 通常是 CDN 位置
+    },
+    optimization: {
+        // 套件 & common 的 code 拆分成 chunk
+        splitChunks: {
+            cacheGroups: {
+                // 拆分第三方套件
+                vendor: {
+                    priority: 1, // 設定優先級, 首先抽出第三方套件
+                    name: 'vendor',
+                    test: /[\\/]node_modules[\\/]/,
+                    chunks: 'initial',
+                    minSize: 0,
+                    minChunks: 1 // 拆分條件是, 在 src 中最少 import 了1次的都拆
+                },
+                // 拆分 common code 成暫存, 避免重複打包
+                common: {
+                    chunks: 'initial',
+                    name: 'common',
+                    minSize: 0, // size 超過 100 個字符的都算
+                    minChunks: 1 // 拆分條件是, 在 src 中最少 import 了3次的都拆
+                }
+            }
+        },
+        // runtimeChunk 的作用是將包含 chunk 映射關係的列表從 main.js 中抽離出來
+        runtimeChunk: {
+            name: 'manifest'
+        }
     },
     resolve: {
         // extensions 可以用來設定 mobile 端要轉 web 的 file, 先找 .web.js, 如果沒有再找.js
@@ -195,6 +223,7 @@ module.exports = smp.wrap({
         new webpack.HotModuleReplacementPlugin(),
         new OptimizeCssPlugin(), // 壓縮 css 應該設定在 webpack.config.prod.js, dev 不用
         // new HardSourceWebpackPlugin(),
+        new MomentLocalesPlugin(),
         new CleanWebpackPlugin({
             // 設定每次 build 都不清除 dll folder, 因為是抽出不常更新的第三方套件
             cleanOnceBeforeBuildPatterns: ['**/*', '!dll', '!dll/**']

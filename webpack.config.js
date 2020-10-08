@@ -8,6 +8,9 @@ const webpack = require('webpack');
 const apiMocker = require('mocker-api');
 const MomentLocalesPlugin = require('moment-locales-webpack-plugin');
 
+// BundleAnalyzerPlugin 可以查看是哪些 plugin 的 size 較大
+const BundleAnalyzerPlugin = require('webpack-bundle-analyzer').BundleAnalyzerPlugin;
+
 // HardSourceWebpackPlugin 為 module 提供中間佔存, 存放路徑是: node_modules/.cache/hard-source
 // 消果再非初次 build 時可以看出, 大幅壓縮
 // 若是與 DllPlugin 方法一起使用, 當 run dev 時 src 有 update, 會產生 error
@@ -51,7 +54,10 @@ module.exports = smp.wrap({
     },
     optimization: {
         // 套件 & common 的 code 拆分成 chunk
+        concatenateModules: false,
         splitChunks: {
+            maxInitialRequests: 6,
+            // cacheGroups 用途是定義 chunks 所屬的 cache 組
             cacheGroups: {
                 // 拆分第三方套件
                 vendor: {
@@ -59,14 +65,37 @@ module.exports = smp.wrap({
                     name: 'vendor',
                     test: /[\\/]node_modules[\\/]/,
                     chunks: 'initial',
+                    enforce: true,
                     minSize: 0,
+                    minChunks: 1 // 拆分條件是, 在 src 中最少 import 了1次的都拆
+                },
+                // 拆分第三方套件 moment
+                moment: {
+                    name: 'moment', // 單獨把 moment 拆包出來
+                    priority: 2, // 權重要大於 vendor
+                    test: (module) => {
+                        return /moment/.test(module.context);
+                    },
+                    chunks: 'initial',
+                    minSize: 10, // size 超過 10 byte 的都算
+                    minChunks: 1 // 拆分條件是, 在 src 中最少 import 了1次的都拆
+                },
+                // 拆分第三方套件 uuid
+                uuid: {
+                    name: 'uuid', // 單獨把 uuid 拆包出來
+                    priority: 2, // 權重要大於 vendor
+                    test: (module) => {
+                        return /uuid/.test(module.context);
+                    },
+                    chunks: 'initial',
+                    minSize: 10, // size 超過 10 byte 的都算
                     minChunks: 1 // 拆分條件是, 在 src 中最少 import 了1次的都拆
                 },
                 // 拆分 common code 成暫存, 避免重複打包
                 common: {
                     chunks: 'initial',
                     name: 'common',
-                    minSize: 0, // size 超過 100 個字符的都算
+                    minSize: 100, // size 超過 100 byte 的都算
                     minChunks: 1 // 拆分條件是, 在 src 中最少 import 了3次的都拆
                 }
             }
@@ -224,6 +253,7 @@ module.exports = smp.wrap({
         new OptimizeCssPlugin(), // 壓縮 css 應該設定在 webpack.config.prod.js, dev 不用
         // new HardSourceWebpackPlugin(),
         new MomentLocalesPlugin(),
+        new BundleAnalyzerPlugin(),
         new CleanWebpackPlugin({
             // 設定每次 build 都不清除 dll folder, 因為是抽出不常更新的第三方套件
             cleanOnceBeforeBuildPatterns: ['**/*', '!dll', '!dll/**']

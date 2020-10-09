@@ -7,7 +7,7 @@ import {commonTest} from './common/common-test';
 import {commonTestTwo} from './common/common-test-2';
 // import {componentTest} from 'component'; // 可以省略長的 import path
 
-const array = ['a', 'aa', 'b', 'bb'];
+const array = ['a', 'aa', 'b', 'bb', 'ccc', 'ccc', 'ddd'];
 
 const TestReact = () => {
     return (

@@ -100,6 +100,7 @@ module.exports = smp.wrap({
                 }
             }
         },
+        // runtimeChunk: 'multiple'
         // runtimeChunk 的作用是將包含 chunk 映射關係的列表從 main.js 中抽離出來
         runtimeChunk: {
             name: 'manifest'
